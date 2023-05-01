@@ -1,92 +1,10 @@
-const arrayNameButton = [
-  ["Eng", "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
-  [
-    "Tab",
-    "q",
-    "w",
-    "e",
-    "r",
-    "t",
-    "y",
-    "u",
-    "i",
-    "o",
-    "p",
-    "[",
-    "]",
-    "\\",
-    "Del",
-  ],
-  ["Caps Lock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "Enter"],
-  ["Shift", "\\", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "↑", "Shift"],
-  ["Ctrl", "Win", "Alt", "Space", "Alt", "Ctrl", "←", "↓", "→"],
-];
+import {
+  arrayNameButton,
+  shiftArrayEn,
+  rusAlphabet,
+  shiftArrayRu,
+} from "./layoutsOfKeyboard.js";
 
-const shiftArrayEn = [["Eng", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "Backspace"], [
-  "Tab",
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "{",
-  "}",
-  "\\",
-  "Del",
-],
-["Caps Lock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", '"', "Enter"],
-["Shift", "|", "z", "x", "c", "v", "b", "n", "m", "<", ">", "?", "↑", "Shift"],
-["Ctrl", "Win", "Alt", "Space", "Alt", "Ctrl", "←", "↓", "→"]];
-
-const rusAlphabet = [
-  ["Rus", "ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
-  [
-    "Tab",
-    "й",
-    "ц",
-    "у",
-    "к",
-    "е",
-    "н",
-    "г",
-    "ш",
-    "щ",
-    "з",
-    "х",
-    "ъ",
-    "\\",
-    "Del",
-  ],
-  ["Caps Lock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "Enter"],
-  ["Shift", "\\", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "/", "↑", "Shift"],
-  ["Ctrl", "Win", "Alt", "Space", "Alt", "Ctrl", "←", "↓", "→"],
-];
-
-const shiftArrayRu = [["Rus", "ё", "!", "\"", "№", ";", "%", ":", "?", "*", "(", ")", "_", "+", "Backspace"], [
-  "Tab",
-  "й",
-  "ц",
-  "у",
-  "к",
-  "е",
-  "н",
-  "г",
-  "ш",
-  "щ",
-  "з",
-  "х",
-  "ъ",
-  "\\",
-  "Del",
-],
-["Caps Lock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "Enter"],
-["Shift", "/", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ",", "↑", "Shift"],
-["Ctrl", "Win", "Alt", "Space", "Alt", "Ctrl", "←", "↓", "→"]];
 let language = "Eng";
 
 let symbolsArray = [...arrayNameButton];
@@ -95,11 +13,13 @@ let isCapslockPressed = false;
 let enterCount = 0;
 const enterArray = [];
 let cursorPosit = 0;
+
 const body = document.querySelector("body");
 const display = document.createElement("textarea");
 display.className = "display";
 body.appendChild(display);
 display.focus();
+
 const wrapperButton = document.createElement("div");
 wrapperButton.className = "wrapper__button";
 body.appendChild(wrapperButton);
@@ -119,11 +39,12 @@ symbolsArray.forEach((element) => {
     wrapperButton.appendChild(button);
     if (value === "Space") {
       button.classList.add("space");
+      button.setAttribute("id", " ");
     }
     if (value === "Backspace") {
       button.classList.add("backspace");
     }
-    if (value === "Del") {
+    if (value === "Delete") {
       button.classList.add("del");
     }
     if (value === "Enter") {
@@ -135,7 +56,7 @@ symbolsArray.forEach((element) => {
     if (value === "Tab") {
       button.classList.add("tab");
     }
-    if (value === "Caps Lock") {
+    if (value === "CapsLock") {
       button.classList.add("caps-lock");
     }
     if (value === "Ctrl") {
@@ -143,6 +64,18 @@ symbolsArray.forEach((element) => {
     }
     if (value === "Eng" || value === "Rus") {
       button.classList.add("lang");
+    }
+    if (value === "↑") {
+      button.setAttribute("id", "ArrowUp");
+    }
+    if (value === "↓") {
+      button.setAttribute("id", "ArrowDown");
+    }
+    if (value === "→") {
+      button.setAttribute("id", "ArrowRight");
+    }
+    if (value === "←") {
+      button.setAttribute("id", "ArrowLeft");
     }
   });
   const newLine = document.createElement("br");
@@ -168,8 +101,17 @@ function changeNameOfButtons() {
   } else if (language === "Rus") {
     symbolsArray = [...rusAlphabet];
   }
+  if ((!isShiftPressed && isCapslockPressed) || (isShiftPressed && !isCapslockPressed)) {
+    symbolsArray = symbolsArray.map((array) => array.map((value) => {
+      if (value === "Eng" || value === "Rus" || value === "Tab" || value === "CapsLock" || value === "Shift" || value === "Ctrl"
+  || value === "Win" || value === "Alt" || value === "Space" || value === "Delete" || value === "Backspace" || value === "Enter") {
+        return value;
+      }
+      return value.toUpperCase();
+    }));
+  }
 
-  symbolsArray.flat().map((value, index) => {
+  symbolsArray.flat().forEach((value, index) => {
     arrayOfButtons[index].innerHTML = value;
   });
 }
@@ -211,7 +153,7 @@ arrayOfButtons.forEach((button) => {
         display.selectionStart = cursorPosit - 1;
         display.selectionEnd = cursorPosit - 1;
       }
-    } else if (value === "Del") {
+    } else if (value === "Delete") {
       if (display.selectionStart !== display.selectionEnd) {
         removeSelectedText();
       } else {
@@ -234,7 +176,7 @@ arrayOfButtons.forEach((button) => {
         display.selectionStart = cursorPosit + 1;
         display.selectionEnd = cursorPosit + 1;
       }
-      console.log(display.value.split('\n').length);
+      console.log(display.value.split("\n").length);
       enterArray.push(display.selectionStart);
       enterCount += 1;
     } else if (value === "Shift") {
@@ -246,7 +188,7 @@ arrayOfButtons.forEach((button) => {
         button.classList.add("active");
       }
       changeNameOfButtons();
-    } else if (value === "Caps Lock") {
+    } else if (value === "CapsLock") {
       if (isCapslockPressed) {
         isCapslockPressed = false;
         button.classList.remove("active");
@@ -254,6 +196,7 @@ arrayOfButtons.forEach((button) => {
         isCapslockPressed = true;
         button.classList.add("active");
       }
+      changeNameOfButtons();
     } else if (value === "Win" || value === "Alt" || value === "Ctrl") {
       cursorPosit = display.selectionStart;
     } else if (value === "→") {
@@ -262,48 +205,28 @@ arrayOfButtons.forEach((button) => {
     } else if (value === "←") {
       display.selectionStart = cursorPosit - 1;
       display.selectionEnd = cursorPosit - 1;
-    } else if (value === "↑") {
-      if (enterCount === 0) {
-        display.selectionStart = cursorPosit;
-        display.selectionEnd = cursorPosit;
-      } else if (enterCount === 1) {
-        display.selectionStart -= enterArray[enterArray.length - 1];
-        display.selectionEnd -= enterArray[enterArray.length - 1];
-        enterArray.pop();
-        enterCount -= 1;
-      } else {
-        display.selectionStart -= (enterArray[enterArray.length - 1]
-           - enterArray[enterArray.length - 2]);
-        display.selectionEnd -= (enterArray[enterArray.length - 1]
-           - enterArray[enterArray.length - 2]);
-        enterCount -= 1;
-        enterArray.pop();
-      }
-    } else if (value === "↓") {
-      if (enterCount === 0) {
-        display.selectionStart = cursorPosit;
-        display.selectionEnd = cursorPosit;
-      }
     } else {
-      if (isCapslockPressed && isShiftPressed) {
-        display.value = display.value.slice(0, display.selectionStart)
-        + value
-        + display.value.slice(display.selectionStart, display.value.length);
-      } else if (isShiftPressed) {
-        display.value = display.value.slice(0, display.selectionStart)
-        + value.toUpperCase()
-        + display.value.slice(display.selectionStart, display.value.length);
-      } else if (isCapslockPressed) {
-        display.value = display.value.slice(0, display.selectionStart)
-        + value.toUpperCase()
-        + display.value.slice(display.selectionStart, display.value.length);
-      } else {
-        display.value = display.value.slice(0, display.selectionStart)
-        + value
-        + display.value.slice(display.selectionStart, display.value.length);
-      }
+      display.value = display.value.slice(0, display.selectionStart)
+          + value
+          + display.value.slice(display.selectionStart, display.value.length);
       display.selectionStart = cursorPosit + 1;
       display.selectionEnd = cursorPosit + 1;
     }
   });
+});
+
+body.addEventListener("keydown", (event) => {
+  console.log(event.code);
+  const findedButton = arrayOfButtons.find((value) => event.key === value.innerHTML);
+
+  if (findedButton) {
+    findedButton.classList.add("light");
+  }
+});
+body.addEventListener("keyup", (event) => {
+  const findedButton = arrayOfButtons.find((value) => event.key === value.innerHTML);
+
+  if (findedButton) {
+    findedButton.classList.remove("light");
+  }
 });
