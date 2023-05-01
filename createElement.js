@@ -5,13 +5,11 @@ import {
   shiftArrayRu,
 } from "./layoutsOfKeyboard.js";
 
-let language = "Eng";
+let language = localStorage.getItem("language") || "Eng";
 
-let symbolsArray = [...arrayNameButton];
+let symbolsArray = language === "Eng" ? arrayNameButton : rusAlphabet;
 let isShiftPressed = false;
 let isCapslockPressed = false;
-let enterCount = 0;
-const enterArray = [];
 let cursorPosit = 0;
 
 const body = document.querySelector("body");
@@ -30,7 +28,7 @@ display.addEventListener("blur", () => {
 });
 
 symbolsArray.forEach((element) => {
-  element.forEach((value) => {
+  element.forEach((value, index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "button";
@@ -39,7 +37,7 @@ symbolsArray.forEach((element) => {
     wrapperButton.appendChild(button);
     if (value === "Space") {
       button.classList.add("space");
-      button.setAttribute("id", " ");
+      button.setAttribute("id", "Space");
     }
     if (value === "Backspace") {
       button.classList.add("backspace");
@@ -52,6 +50,12 @@ symbolsArray.forEach((element) => {
     }
     if (value === "Shift") {
       button.classList.add("shift");
+
+      if ((index !== 0)) {
+        button.setAttribute("id", "ShiftRight");
+      } else {
+        button.setAttribute("id", "ShiftLeft");
+      }
     }
     if (value === "Tab") {
       button.classList.add("tab");
@@ -61,6 +65,18 @@ symbolsArray.forEach((element) => {
     }
     if (value === "Ctrl") {
       button.classList.add("ctrl");
+      if (index !== 0) {
+        button.setAttribute("id", "ControlRight");
+      } else {
+        button.setAttribute("id", "ControlLeft");
+      }
+    }
+    if (value === "Alt") {
+      if (index !== 2) {
+        button.setAttribute("id", "AltRight");
+      } else {
+        button.setAttribute("id", "AltLeft");
+      }
     }
     if (value === "Eng" || value === "Rus") {
       button.classList.add("lang");
@@ -126,7 +142,7 @@ arrayOfButtons.forEach((button) => {
       } else {
         language = "Eng";
       }
-
+localStorage.setItem("language", language);
       changeNameOfButtons();
     } else if (value === "Space") {
       display.value = `${display.value.slice(
@@ -176,9 +192,6 @@ arrayOfButtons.forEach((button) => {
         display.selectionStart = cursorPosit + 1;
         display.selectionEnd = cursorPosit + 1;
       }
-      console.log(display.value.split("\n").length);
-      enterArray.push(display.selectionStart);
-      enterCount += 1;
     } else if (value === "Shift") {
       if (isShiftPressed) {
         isShiftPressed = false;
@@ -216,17 +229,35 @@ arrayOfButtons.forEach((button) => {
 });
 
 body.addEventListener("keydown", (event) => {
-  console.log(event.code);
-  const findedButton = arrayOfButtons.find((value) => event.key === value.innerHTML);
-
-  if (findedButton) {
-    findedButton.classList.add("light");
+  if (event.key === "CapsLock") {
+    const capsLock = arrayOfButtons.find((button) => button.innerHTML === "CapsLock");
+    if (isCapslockPressed) {
+      isCapslockPressed = false;
+      capsLock.classList.remove("active");
+    } else {
+      isCapslockPressed = true;
+      capsLock.classList.add("active");
+    }
+    changeNameOfButtons();
+    console.log(event.key);
   }
+
+  arrayOfButtons.forEach((button) => {
+    console.log(event.key);
+
+    if (event.key === "Shift" || event.key === "Alt") {
+      if (button.id === event.code) {
+        button.classList.add("light");
+      }
+    } else if (button.id === event.code || button.innerHTML === event.key) {
+      button.classList.add("light");
+    }
+  });
 });
 body.addEventListener("keyup", (event) => {
-  const findedButton = arrayOfButtons.find((value) => event.key === value.innerHTML);
-
-  if (findedButton) {
-    findedButton.classList.remove("light");
-  }
+  arrayOfButtons.forEach((button) => {
+    if (button.id === event.code || button.innerHTML === event.key) {
+      button.classList.remove("light");
+    }
+  });
 });
