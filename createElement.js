@@ -6,11 +6,11 @@ import {
 } from './layoutsOfKeyboard.js';
 
 let language = localStorage.getItem('language') || 'Eng';
-
 let symbolsArray = language === 'Eng' ? arrayNameButton : rusAlphabet;
 let isShiftPressed = false;
 let isCapslockPressed = false;
 let cursorPosit = 0;
+let checkSound = 'on';
 
 const body = document.querySelector('body');
 const display = document.createElement('textarea');
@@ -18,6 +18,7 @@ display.className = 'display';
 body.appendChild(display);
 display.focus();
 
+createWrapper();
 const wrapperButton = document.createElement('div');
 wrapperButton.className = 'wrapper__button';
 body.appendChild(wrapperButton);
@@ -135,7 +136,9 @@ function changeNameOfButtons() {
 arrayOfButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const value = button.innerHTML;
-
+    if (checkSound === 'on') {
+      playSound();
+    }
     if (value === 'Eng' || value === 'Rus') {
       if (value === 'Eng') {
         language = 'Rus';
@@ -229,6 +232,9 @@ arrayOfButtons.forEach((button) => {
 });
 
 body.addEventListener('keydown', (event) => {
+  if (checkSound === 'on') {
+    playSound();
+  }
   if (event.key === 'CapsLock') {
     const capsLock = arrayOfButtons.find((button) => button.innerHTML === 'CapsLock');
     if (isCapslockPressed) {
@@ -292,3 +298,99 @@ body.addEventListener('keyup', (event) => {
     }
   });
 });
+
+function createWrapper() {
+  const soundMicStyleWrapper = document.createElement('div');
+  soundMicStyleWrapper.className = 'sound-mic-style-wrapper';
+  body.appendChild(soundMicStyleWrapper);
+  soundMicStyleWrapper.append(createChangeStyle(), addButtonSound(), createElementVoiceInput());
+}
+
+function createChangeStyle() {
+  const styleChangeContainer = document.createElement('div');
+  styleChangeContainer.className = 'style-change';
+  styleChangeContainer.innerHTML = 'Style';
+  const switchOnOff = document.createElement('input');
+  switchOnOff.className = 'switch-on-off';
+  switchOnOff.type = 'checkbox';
+  styleChangeContainer.appendChild(switchOnOff);
+  return styleChangeContainer;
+}
+
+function addEventChangeStyle() {
+  const switchOnOff = document.querySelector('.switch-on-off');
+  const btnWrapper = document.querySelector('.wrapper__button');
+  switchOnOff.addEventListener('click', () => {
+    if (!body.classList.contains('active')) {
+      body.classList.add('active');
+      display.classList.add('active');
+      btnWrapper.classList.add('active');
+    } else {
+      body.classList.remove('active');
+      display.classList.remove('active');
+      btnWrapper.classList.remove('active');
+    }
+  });
+}
+
+addEventChangeStyle();
+
+function addButtonSound() {
+  const buttonSound = document.createElement('div');
+  buttonSound.className = 'wrapper-button-sound';
+  const imgSound = document.createElement('img');
+  imgSound.className = 'sound-img';
+  imgSound.src = './assets/img/sound-on.svg';
+  buttonSound.append(imgSound);
+  return buttonSound;
+}
+
+function playSound() {
+  const audio = document.createElement('audio');
+  audio.src = './assets/sound/knopka.mp3';
+  audio.autoplay = true;
+  return true;
+}
+
+function swichSound() {
+  const imgSound = document.querySelector('.sound-img');
+  imgSound.addEventListener('click', () => {
+    if (checkSound === 'on') {
+      imgSound.src = './assets/img/sound-off.svg';
+      checkSound = 'off';
+    } else {
+      imgSound.src = './assets/img/sound-on.svg';
+      checkSound = 'on';
+    }
+  });
+}
+swichSound();
+
+function createElementVoiceInput() {
+  const wrapperVoiceInput = document.createElement('div');
+  wrapperVoiceInput.className = 'wrapper-voice-input';
+  const imgVoiceInput = document.createElement('img');
+  imgVoiceInput.className = 'voice-input';
+  imgVoiceInput.src = './assets/img/microphone.svg';
+  wrapperVoiceInput.append(imgVoiceInput);
+  return wrapperVoiceInput;
+}
+
+function addVoiceIput() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  const startVoice = document.querySelector('.voice-input');
+  startVoice.addEventListener('click', () => {
+    recognition.start();
+  });
+  recognition.onresult = function (e) {
+    const { transcript } = e.results[0][0];
+    const tableText = document.querySelector('.display');
+    if (tableText === '') {
+      tableText.value = transcript;
+    } else {
+      tableText.value += transcript;
+    }
+  };
+}
+addVoiceIput();

@@ -1,45 +1,78 @@
 body {
+  margin: 0 auto;
   margin-top: 5%;
-  margin-left: 5%;
-  margin-right: 5%;
+  padding-left: 5%;
+  padding-right: 5%;
+  background-color: rgb(156, 222, 222);
+  max-width: 1200px;
 }
 .display {
   height: 200px;
   font-size: 2em;
   width: 100%;
+  padding: 1%;
 }
 .wrapper__button {
   border: 1px solid gray;
   text-align: center;
   padding: 10px 10px 10px 10px;
+  background-color: rgb(189, 233, 233);
 }
 .button {
-  background: rgb(222, 185, 105);
+  position: relative;
+  background: rgb(85, 76, 56);
   font-size: 1.3em;
   border-radius: 5%;
   height: 50px;
   font-weight: 500;
   width: 50px;
-  color: transparent;
+  color: white;
   text-shadow: 0 0 0 rgb(7, 30, 66);
   border-color: rgb(124, 154, 230);
   margin: 3px 3px;
 }
 
-.button:active {
-  box-shadow: inset 0 0 0 4px yellow;
-  transition: 0.1s;
+button.button {
+  font-weight: 600;
+  color: white;
+  background: rgb(85, 76, 56);
+  border: 2px solid #3a271d;
+  border-radius: 0.3em;
+  transition: transform 0.15s;
+  transform-style: preserve-3d;
 }
-.button.light {
-  box-shadow: inset 0 0 0 4px yellow;
-  transition: 0.1s;
+
+.button:hover {
+  background-color: rgb(62, 56, 41);
 }
+
+button.button::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  transform: translate3d(0, 0.4em, -0.5em);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+button.button:active {
+  background: rgb(82, 74, 55);
+  transform: translate(0.1em, -0.2em);
+}
+
 .changeLanguage {
   margin: auto;
 }
+
 .space {
   width: 335px;
 }
+
 .backspace,
 .del,
 .enter,
@@ -49,14 +82,99 @@ body {
 .ctrl {
   width: auto;
 }
+
 .shift.active,
 .caps-lock.active {
-  box-shadow: inset 0 0 0 2px yellow;
-  background: green;
+  background: rgb(34, 40, 34);
 }
-.lang {
-  color: rgb(249, 239, 40);
 
-  background-color: rgb(35, 167, 191);
+button.lang {
+  color: rgb(249, 239, 40);
   width: auto;
+}
+
+.style-change {
+  position: relative;
+  padding-bottom: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 20px;
+  color: rgb(82, 74, 55);
+  font-weight: 800;
+}
+
+.switch-on-off {
+  position: absolute;
+  width: 45px;
+  height: 20px;
+  -webkit-appearance: none;
+  outline: none;
+  background: #fce6da;
+  border-radius: 20px;
+  transition: 0.5s;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.switch-on-off:checked {
+  background: rgb(43, 54, 43);
+}
+
+.switch-on-off:before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  top: 0;
+  left: 0;
+  background: rgb(153, 104, 104);
+  transition: 0.5s;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgb(134, 134, 90);
+}
+
+.switch-on-off:checked:before {
+  left: 25px;
+}
+
+body.active {
+  background-color: black;
+}
+
+.display.active {
+  background-color: rgb(35, 35, 35);
+  color: aliceblue;
+}
+.wrapper__button.active {
+  background-color: rgb(34, 32, 32);
+}
+
+.sound-mic-style-wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 20px;
+}
+
+.sound-img,
+.voice-input {
+  width: 30px;
+  cursor: pointer;
+}
+@media (max-width: 770px) {
+  .button {
+    font-size: 0.9em;
+    border-radius: 3%;
+    height: 25px;
+    font-weight: 400;
+    width: 25px;
+  }
+
+  .backspace,
+  .del,
+  .enter,
+  .shift,
+  .tab,
+  .caps-lock,
+  .ctrl {
+    width: auto;
+  }
 }
